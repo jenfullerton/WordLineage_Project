@@ -1,0 +1,111 @@
+﻿<Window x:Class="WordLineage.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Word Lineage" Width="600" Height="800" >
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Delete" Executed="DeleteCommand_Executed" CanExecute="DeleteCommand_CanExecute"/>
+    </Window.CommandBindings>
+    
+    <!-- Grid SetUp -->
+    <Grid Background="WhiteSmoke">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
+
+        <!-- File/Options Bar -->
+        <DockPanel Grid.ColumnSpan="2">
+            <Menu DockPanel.Dock="Top" Background="Gray" Padding="5" >
+                <MenuItem Header="Node Controls">
+                    <MenuItem Header="Delete Node" Command="Delete"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+        <!-- *** Family Panel (Left) *** -->
+        <!-- Name of Family -->
+        <TextBlock Grid.Row="1" x:Name="FamilyName" Text="Family Name"
+                   Style="{StaticResource NodeTitleTextStyle}"/>
+        
+        <!-- Family Display -->
+        <Border Grid.Row="2" Padding="10,0,10,20">
+            <ListView x:Name="FamilyDisplay" SelectionChanged="FamilyDisplay_SelectionChanged">
+                <ListView.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource NodeDisplayTextStyle}"/>
+                </ListView.Resources>
+            </ListView>
+        </Border>
+
+        <!-- *** Node Panel (Right) *** -->
+        <!-- Name of Node -->
+        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="NodeNameDisplay"
+                   Style="{StaticResource NodeTitleTextStyle}"
+                   Text="Node Name" TextWrapping="Wrap"/>
+        
+        <!-- Node Details -->
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="2">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource NodeDisplayTextStyle}"/>
+            </StackPanel.Resources>
+
+            <TextBlock Text="Definition" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+            <!-- 
+            <TextBlock x:Name="NodeDefinitionDisplay" Margin="20,5,5,10">
+                1. sample definition 1 <LineBreak/>
+                2. sample definition 2 <LineBreak/>
+            </TextBlock>
+            -->
+            <ListView x:Name="NodeDefinitionDisplay" Margin="20,5,30,5">
+            </ListView>
+
+
+            <TextBlock Text="Description" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+            <TextBlock x:Name="NodeDescriptionDisplay" Margin="20,5,30,10">
+                Sample text description.
+            </TextBlock>
+            
+            <TextBlock Text="Tags" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+            <!--
+            <TextBlock x:Name="NodeTagDisplay" Margin="20,5,5,10">
+                #sampleTag1 #sampleTag2
+            </TextBlock>
+            -->
+            <ListView x:Name="NodeTagDisplay" Margin="20,5,30,5">
+            </ListView>
+            
+
+            <TextBlock Text="Parents" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+            <!--
+            <TextBlock x:Name="NodeParentDisplay" Margin="20,5,5,10">
+                Parents
+            </TextBlock>
+            -->
+            <ListView x:Name="NodeParentsDisplay" Margin="20,5,30,5">
+                
+            </ListView>
+
+            <TextBlock Text="Children" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+            <!--
+            <TextBlock x:Name="NodeChildrenDisplay" Margin="20,5,5,10">
+                Children
+            </TextBlock>
+            -->
+            <ListView x:Name="NodeChildrenDisplay" Margin="20,5,30,5">
+                
+            </ListView>
+
+        </StackPanel>
+
+
+
+    </Grid>
+</Window>
