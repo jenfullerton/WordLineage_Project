@@ -13,6 +13,91 @@ namespace WordLineage
         /// <summary>
         /// An description of the word contained by this WordNode.
         /// </summary>
+        public List<WordNode> Parents { get; private set; }
+        /// <summary>
+        /// A list of child WordNodes for this WordNode.
+        /// If the list is empty, then this WordNode is a leaf.
+        /// </summary>
+        public List<WordNode> Children { get; private set; }
+        #endregion
+
+        #region Constructors
+        public WordNode(string name)
+        {
+            this.Name = name;
+            this.Children = new List<WordNode>();
+            this.Parents = new List<WordNode>();
+        }
+
+
+        #endregion
+
+        #region Parents_Controls
+        /// <summary>
+        /// Removes a parent from the parents list for this WordNode.
+        /// </summary>
+        /// <returns>Returns true if removal is successful, false otherwise.</returns>
+        public bool RemoveParent(int index)
+        {
+            if (index < 0 || index >= this.Parents.Count)
+            {
+                return false;
+            }
+            else
+            {
+                this.Parents.RemoveAt(index);
+                return true;
+            }
+        }
+
+        public void RemoveAllParents()
+        {
+            this.Parents.Clear();
+        }
+
+        #endregion
+
+        #region Children_Controls
+        /// <summary>
+        /// Removes a Child fromt the children list for this WordNode.
+        /// </summary>
+        /// <returns>Returns true if the child was successfully removed, false otherwise.</returns>
+        public bool RemoveChild(int index)
+        {
+            if (index < 0 || index > this.Children.Count)
+            {
+                return false;
+            }
+            else
+            {
+                this.Children.RemoveAt(index);
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Clears the list of Children for this WordNode.
+        /// </summary>
+        public void RemoveAllChildren()
+        {
+            this.Children.Clear();
+        }
+
+
+        #endregion
+
+        #region Utilities
+        // *** Utilities *** //
+        // toString returns the name of the WordNode
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        #endregion
+
+        #region Old_Fields
+        /*
         public string Description { get; set; }
         /// <summary>
         /// An list of tags to apply to the WordNode.
@@ -26,15 +111,11 @@ namespace WordLineage
         /// A list of parent WordNodes for this WordNode.
         /// If it is empty, this WordNode is a root.
         /// </summary>
-        public List<WordNode> Parents { get; private set; }
-        /// <summary>
-        /// A list of child WordNodes for this WordNode.
-        /// If the list is empty, then this WordNode is a leaf.
-        /// </summary>
-        public List<WordNode> Children { get; private set; }
+        */
         #endregion
 
-        #region Constructors
+        #region Old_Constructors
+        /*
         // *** Constructors *** //
         /// <summary>
         /// A simple constructor for WordNode that only requires a Name.
@@ -127,9 +208,11 @@ namespace WordLineage
             }
             
         }
+        */
         #endregion
 
-        #region Definition_Controls
+        #region Old_Definition_Controls
+        /*
         // *** Definition Controls *** //
 
         /// <summary>
@@ -243,10 +326,11 @@ namespace WordLineage
         {
             this.Definition.Clear();
         }
-
+        */
         #endregion
 
-        #region Description_Controls
+        #region Old_Description_Controls
+        /*
         // *** Description Controls *** //
         // replace description somewhat unnecessary, can just use set
 
@@ -257,10 +341,11 @@ namespace WordLineage
         {
             this.Description = "";
         }
-
+        */
         #endregion
 
-        #region Tag_Controls
+        #region Old_Tag_Controls
+        /*
         // *** Tag Controls *** //
         /// <summary>
         /// Returns a single tag at the specified index.
@@ -353,68 +438,7 @@ namespace WordLineage
         {
             return this.Tags.Count;
         }
-        #endregion
-
-        #region Parents_Controls
-        /// <summary>
-        /// Removes a parent from the parents list for this WordNode.
-        /// </summary>
-        /// <returns>Returns true if removal is successful, false otherwise.</returns>
-        public bool RemoveParent(int index)
-        {
-            if (index < 0 || index >= this.Parents.Count)
-            {
-                return false;
-            } else
-            {
-                this.Parents.RemoveAt(index);
-                return true;
-            }
-        }
-
-        public void RemoveAllParents()
-        {
-            this.Parents.Clear();
-        }
-
-        #endregion
-
-        #region Children_Controls
-        /// <summary>
-        /// Removes a Child fromt the children list for this WordNode.
-        /// </summary>
-        /// <returns>Returns true if the child was successfully removed, false otherwise.</returns>
-        public bool RemoveChild(int index)
-        {
-            if (index < 0 || index > this.Children.Count)
-            {
-                return false ;
-            } else
-            {
-                this.Children.RemoveAt(index);
-                return true;
-            }
-        }
-
-        /// <summary>
-        /// Clears the list of Children for this WordNode.
-        /// </summary>
-        public void RemoveAllChildren()
-        {
-            this.Children.Clear();
-        }
-
-
-        #endregion
-
-        #region Utilities
-        // *** Utilities *** //
-        // toString returns the name of the WordNode
-        public override string ToString()
-        {
-            return Name;
-        }
-
+        */
         #endregion
     }
 }

@@ -57,51 +57,35 @@
                 <Style TargetType="TextBlock" BasedOn="{StaticResource NodeDisplayTextStyle}"/>
             </StackPanel.Resources>
 
+            <!--
             <TextBlock Text="Definition" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <!-- 
-            <TextBlock x:Name="NodeDefinitionDisplay" Margin="20,5,5,10">
-                1. sample definition 1 <LineBreak/>
-                2. sample definition 2 <LineBreak/>
-            </TextBlock>
-            -->
             <ListView x:Name="NodeDefinitionDisplay" Margin="20,5,30,5">
             </ListView>
-
-
+            
             <TextBlock Text="Description" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
             <TextBlock x:Name="NodeDescriptionDisplay" Margin="20,5,30,10">
                 Sample text description.
             </TextBlock>
             
             <TextBlock Text="Tags" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <!--
-            <TextBlock x:Name="NodeTagDisplay" Margin="20,5,5,10">
-                #sampleTag1 #sampleTag2
-            </TextBlock>
-            -->
             <ListView x:Name="NodeTagDisplay" Margin="20,5,30,5">
             </ListView>
-            
+            -->
+
 
             <TextBlock Text="Parents" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <!--
-            <TextBlock x:Name="NodeParentDisplay" Margin="20,5,5,10">
-                Parents
-            </TextBlock>
-            -->
             <ListView x:Name="NodeParentsDisplay" Margin="20,5,30,5">
-                
             </ListView>
 
             <TextBlock Text="Children" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <!--
-            <TextBlock x:Name="NodeChildrenDisplay" Margin="20,5,5,10">
-                Children
-            </TextBlock>
-            -->
             <ListView x:Name="NodeChildrenDisplay" Margin="20,5,30,5">
-                
             </ListView>
+
+            <TextBlock Text="Add Node" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+            <StackPanel Orientation="Horizontal" Margin="5" >
+                <TextBox x:Name="AddNodeName" MinHeight="16" MinWidth="150"/>
+                <Button Margin="5" x:Name="AddNodeButton" Click="AddNodeButton_Click"> Add Node</Button>
+            </StackPanel>
 
         </StackPanel>
 

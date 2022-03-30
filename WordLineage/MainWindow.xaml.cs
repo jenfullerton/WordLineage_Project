@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -17,6 +18,26 @@ namespace WordLineage
         {
             InitializeComponent();
 
+            ObservableCollection<WordNode> nodes = new();
+            nodes.Add(new WordNode("First"));
+            nodes.Add(new WordNode("Second"));
+            nodes.Add(new WordNode("Third"));
+            nodes.Add(new WordNode("Fourth"));
+            nodes.Add(new WordNode("Fifth"));
+            nodes.Add(new WordNode("Sixth"));
+
+            // add parents and children
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                for (int j = i + 1; j < nodes.Count; j++)
+                {
+                    nodes[i].Children.Add(nodes[j]);
+                    nodes[j].Parents.Add(nodes[i]);
+                }
+            }
+
+
+            /*
             List<WordNode> nodes = new();
             for (int i = 1; i <= 5; i++)
             {
@@ -36,20 +57,11 @@ namespace WordLineage
                 node.AddDefinition("");
                 node.AddDefinitions(new List<string> { "a definition", "", "and another one" });
             }
-
-            // add children
-            for(int i = 0; i < nodes.Count-1; i++)
-            {
-                for(int j = i+1; j < nodes.Count; j++)
-                {
-                    nodes[i].Children.Add(nodes[j]);
-                    nodes[j].Parents.Add(nodes[i]);
-                }
-            }
-
+            */
 
             // data bind listbox to nodes
             FamilyDisplay.ItemsSource = nodes;
+            
         }
         #endregion
 
@@ -63,24 +75,20 @@ namespace WordLineage
             {
                 // Update display with new info
                 NodeNameDisplay.Text = selectedNode.Name;
+                NodeParentsDisplay.ItemsSource = selectedNode.Parents;
+                NodeChildrenDisplay.ItemsSource = selectedNode.Children;
+                /* 
                 NodeDefinitionDisplay.ItemsSource = selectedNode.Definition;
                 NodeDescriptionDisplay.Text = selectedNode.Description;
                 NodeTagDisplay.ItemsSource= selectedNode.Tags;
-                NodeParentsDisplay.ItemsSource = selectedNode.Parents;
-                NodeChildrenDisplay.ItemsSource = selectedNode.Children;
-
-                // clear selected items for Definitions, Tags, Parents, and Children
-                NodeDefinitionDisplay.SelectedItem = null;
-                NodeTagDisplay.SelectedItem = null;
-                NodeParentsDisplay.SelectedItem = null;
-                NodeChildrenDisplay.SelectedItem = null;
-
+                */
             }
             else 
             {
                 // if selection is null, clear the display
                 NodeNameDisplay.Text = "[No WordNode Selected]";
-                NodeDescriptionDisplay.Text = "";
+                NodeParentsDisplay.ItemsSource = null;
+                NodeChildrenDisplay.ItemsSource= null;
             }
         }
 
@@ -105,7 +113,20 @@ namespace WordLineage
 
         private void DeleteCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).RemoveAt( FamilyDisplay.SelectedIndex );
+        }
 
+        private void AddNodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if( AddNodeName.Text != "")
+            {
+                (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).Add(
+                    new WordNode(AddNodeName.Text));
+                AddNodeName.Text = "";
+            } else
+            {
+                MessageBox.Show("Node Name cannot be empty. Please enter a valid name");
+            }
         }
 
         #endregion
