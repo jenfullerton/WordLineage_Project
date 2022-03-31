@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Data;
 
 // using System.Diagnostics; // use for debugging
 
@@ -61,6 +62,7 @@ namespace WordLineage
 
             // data bind listbox to nodes
             FamilyDisplay.ItemsSource = nodes;
+            ParentComboBox.ItemsSource = nodes;
             
         }
         #endregion
@@ -77,6 +79,7 @@ namespace WordLineage
                 NodeNameDisplay.Text = selectedNode.Name;
                 NodeParentsDisplay.ItemsSource = selectedNode.Parents;
                 NodeChildrenDisplay.ItemsSource = selectedNode.Children;
+                
                 /* 
                 NodeDefinitionDisplay.ItemsSource = selectedNode.Definition;
                 NodeDescriptionDisplay.Text = selectedNode.Description;
@@ -116,19 +119,75 @@ namespace WordLineage
             (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).RemoveAt( FamilyDisplay.SelectedIndex );
         }
 
-        private void AddNodeButton_Click(object sender, RoutedEventArgs e)
+        private void NewCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if( AddNodeName.Text != "")
+            // new nodes can be created if the new node popup is not currently open
+            if (pop_AddNode.IsOpen)
             {
-                (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).Add(
-                    new WordNode(AddNodeName.Text));
-                AddNodeName.Text = "";
+                e.CanExecute = false;
             } else
             {
-                MessageBox.Show("Node Name cannot be empty. Please enter a valid name");
+                e.CanExecute = true;
             }
         }
 
+        private void NewCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            // opens the popup for new node
+            pop_AddNode.IsOpen = true;
+        }
+
+
         #endregion
+
+        private void AddNodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(AddNodeName.Text))
+            {
+                MessageBox.Show("Node Name cannot be empty. Please enter a valid name");
+                AddNodeName.Text = "";
+                return;
+            }
+            else
+            {
+                WordNode newNode = new(AddNodeName.Text);
+
+                if(ParentComboBox.SelectedItem != null)
+                {
+                    newNode.Parents.Add(ParentComboBox.SelectedItem as WordNode);
+                }
+
+                (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).Add(newNode);
+                
+                // reset textbox & combo box and close the window
+                AddNodeName.Text = "";
+                ParentComboBox.SelectedIndex = -1;
+                pop_AddNode.IsOpen = false;
+            }
+        }
+
+        private void AddParentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FamilyDisplay.SelectedItem != null && ParentComboBox.SelectedItem != null)
+            {
+                // add selected node in parent box to list of parents for selected node
+                (FamilyDisplay.SelectedItem as WordNode).Parents.Add(ParentComboBox.SelectedItem as WordNode);
+
+                // refresh the list in parents by calling update source on the binding
+                NodeParentsDisplay.Items.Refresh();
+
+            } else
+            {
+                MessageBox.Show("Please select a node and a parent before adding.");
+            }
+        }
+
+        private void Btn_CancelAddNode_Click(object sender, RoutedEventArgs e)
+        {
+            // reset new node name, selected item in parent drop down, and close popup
+            AddNodeName.Text = "";
+            ParentComboBox.SelectedIndex = -1;
+            pop_AddNode.IsOpen = false;
+        }
     }
 }

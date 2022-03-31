@@ -8,6 +8,7 @@
 
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Delete" Executed="DeleteCommand_Executed" CanExecute="DeleteCommand_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.New" Executed="NewCommand_Executed" CanExecute="NewCommand_CanExecute"/>
     </Window.CommandBindings>
     
     <!-- Grid SetUp -->
@@ -27,6 +28,7 @@
             <Menu DockPanel.Dock="Top" Background="Gray" Padding="5" >
                 <MenuItem Header="Node Controls">
                     <MenuItem Header="Delete Node" Command="Delete"/>
+                    <MenuItem Header="Add New Node" Command="New"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
@@ -81,12 +83,33 @@
             <ListView x:Name="NodeChildrenDisplay" Margin="20,5,30,5">
             </ListView>
 
-            <TextBlock Text="Add Node" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <StackPanel Orientation="Horizontal" Margin="5" >
-                <TextBox x:Name="AddNodeName" MinHeight="16" MinWidth="150"/>
-                <Button Margin="5" x:Name="AddNodeButton" Click="AddNodeButton_Click"> Add Node</Button>
-            </StackPanel>
+            
 
+            <!-- Add Node Popup Menu -->
+            <Popup x:Name="pop_AddNode" IsOpen="False" MinHeight="200" MinWidth="200"
+                   Placement="Center">
+                <Border BorderBrush="#FF5B5858" BorderThickness="2" Background="LightGray">
+                    <StackPanel Orientation="Vertical" Margin="5">
+                        <StackPanel Orientation="Horizontal" Margin="5" >
+                            <TextBlock Text="Node Name: " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+                            <TextBox x:Name="AddNodeName" MinHeight="16" MinWidth="150"/>
+                        </StackPanel>
+
+                        <TextBlock Text="Parent Node (optional): " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <ComboBox x:Name="ParentComboBox" MinHeight="16" MinWidth="150">
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Margin="5" x:Name="AddNodeButton" Click="AddNodeButton_Click">Add Node</Button>
+                            <Button Margin="5" x:Name="Btn_CancelAddNode" Click="Btn_CancelAddNode_Click">Cancel</Button>
+                        </StackPanel>
+                        
+                    </StackPanel>
+                </Border>
+            </Popup>
+            
         </StackPanel>
 
 
