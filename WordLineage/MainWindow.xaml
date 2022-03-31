@@ -29,6 +29,7 @@
                 <MenuItem Header="Node Controls">
                     <MenuItem Header="Delete Node" Command="Delete"/>
                     <MenuItem Header="Add New Node" Command="New"/>
+                    <MenuItem Header="Edit Node" x:Name="EditNodeMenuBtn"/>
                 </MenuItem>
             </Menu>
         </DockPanel>

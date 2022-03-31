@@ -15,7 +15,7 @@ namespace WordLineage
             }
             else
             {
-                StringBuilder sb = new StringBuilder("");
+                StringBuilder sb = new("");
 
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -39,7 +39,7 @@ namespace WordLineage
 
         public static List<string> WordNodeListAsStringList(List<WordNode> words)
         {
-            List<string> namelist = new List<string>();
+            List<string> namelist = new();
             foreach (WordNode word in words)
             {
                 namelist.Add(word.ToString());

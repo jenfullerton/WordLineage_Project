@@ -19,6 +19,13 @@ namespace WordLineage
         {
             InitializeComponent();
 
+            // bind Routed Commands
+            RoutedCommand EditNodeCommand = new();
+            CommandBinding editNodeBinding = new(EditNodeCommand,
+                EditNodeCommand_Executed, EditNodeCommand_CanExecute);
+            this.CommandBindings.Add(editNodeBinding);
+            EditNodeMenuBtn.Command = EditNodeCommand;
+
             ObservableCollection<WordNode> nodes = new();
             nodes.Add(new WordNode("First"));
             nodes.Add(new WordNode("Second"));
@@ -105,7 +112,7 @@ namespace WordLineage
 
         private void DeleteCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if(FamilyDisplay.SelectedItem != null)
+            if(FamilyDisplay.ItemsSource != null && FamilyDisplay.SelectedIndex > -1)
             {
                 e.CanExecute = true;
             } else
@@ -116,7 +123,12 @@ namespace WordLineage
 
         private void DeleteCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).RemoveAt( FamilyDisplay.SelectedIndex );
+            // I am like... POSITIVE that we can't get a null here
+            // but intellisense yell at me so *throws hands up* we do the check
+            if(FamilyDisplay.ItemsSource is ObservableCollection<WordNode> nodes)
+            {
+                nodes.RemoveAt(FamilyDisplay.SelectedIndex);
+            }
         }
 
         private void NewCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -137,6 +149,15 @@ namespace WordLineage
             pop_AddNode.IsOpen = true;
         }
 
+        private void EditNodeCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (FamilyDisplay.SelectedIndex > -1);
+        }
+
+        private void EditNodeCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("Node can be edited!");
+        }
 
         #endregion
 
@@ -150,16 +171,23 @@ namespace WordLineage
             }
             else
             {
-                WordNode newNode = new(AddNodeName.Text);
-
-                if(ParentComboBox.SelectedItem != null)
+                if (FamilyDisplay.ItemsSource is ObservableCollection<WordNode> nodes)
                 {
-                    newNode.Parents.Add(ParentComboBox.SelectedItem as WordNode);
+                    WordNode newNode = new(AddNodeName.Text);
+
+                    if (ParentComboBox.SelectedItem is WordNode parent)
+                    {
+                        newNode.Parents.Add(parent);
+                    }
+
+                    nodes.Add(newNode);
+                } else
+                {
+                    // warning appears if no word family in the display 
+                    MessageBox.Show("No family selected. (FamilyDisplay.ItemsSource is null).");
                 }
 
-                (FamilyDisplay.ItemsSource as ObservableCollection<WordNode>).Add(newNode);
-                
-                // reset textbox & combo box and close the window
+                // reset textbox & combo box and close the popup window
                 AddNodeName.Text = "";
                 ParentComboBox.SelectedIndex = -1;
                 pop_AddNode.IsOpen = false;
@@ -168,10 +196,13 @@ namespace WordLineage
 
         private void AddParentButton_Click(object sender, RoutedEventArgs e)
         {
-            if (FamilyDisplay.SelectedItem != null && ParentComboBox.SelectedItem != null)
+            if (FamilyDisplay.SelectedItem is WordNode node && ParentComboBox.SelectedItem is WordNode parent)
             {
+                // FamilyDisplay.SelectedItem != null && ParentComboBox.SelectedItem != null
+
                 // add selected node in parent box to list of parents for selected node
-                (FamilyDisplay.SelectedItem as WordNode).Parents.Add(ParentComboBox.SelectedItem as WordNode);
+                // (FamilyDisplay.SelectedItem as WordNode).Parents.Add(ParentComboBox.SelectedItem as WordNode);
+                node.Parents.Add(parent);
 
                 // refresh the list in parents by calling update source on the binding
                 NodeParentsDisplay.Items.Refresh();
