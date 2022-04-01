@@ -69,7 +69,8 @@ namespace WordLineage
 
             // data bind listbox to nodes
             FamilyDisplay.ItemsSource = nodes;
-            ParentComboBox.ItemsSource = nodes;
+            Cbx_Parents.ItemsSource = nodes;
+            Cbx_Children.ItemsSource = nodes;
             
         }
         #endregion
@@ -112,7 +113,8 @@ namespace WordLineage
 
         private void DeleteCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if(FamilyDisplay.ItemsSource != null && FamilyDisplay.SelectedIndex > -1)
+            if(FamilyDisplay.ItemsSource != null && FamilyDisplay.SelectedIndex > -1
+                && !pop_ModifyNode.IsOpen && !pop_AddNode.IsOpen)
             {
                 e.CanExecute = true;
             } else
@@ -133,8 +135,8 @@ namespace WordLineage
 
         private void NewCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            // new nodes can be created if the new node popup is not currently open
-            if (pop_AddNode.IsOpen)
+            // no other popups can be open
+            if (pop_ModifyNode.IsOpen || pop_AddNode.IsOpen)
             {
                 e.CanExecute = false;
             } else
@@ -151,17 +153,21 @@ namespace WordLineage
 
         private void EditNodeCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (FamilyDisplay.SelectedIndex > -1);
+            // in order to open the edit node command
+            // 1. a valid index/node must be selected
+            // 2. new node popup must be closed
+            // 3. edit node popup must be closed
+            e.CanExecute = ( (FamilyDisplay.SelectedIndex > -1) && !pop_AddNode.IsOpen && !pop_ModifyNode.IsOpen);
         }
 
         private void EditNodeCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBox.Show("Node can be edited!");
+            pop_ModifyNode.IsOpen = true;
         }
 
         #endregion
 
-        private void AddNodeButton_Click(object sender, RoutedEventArgs e)
+        private void Btn_NewNode_Click(object sender, RoutedEventArgs e)
         {
             if (String.IsNullOrWhiteSpace(AddNodeName.Text))
             {
@@ -174,36 +180,35 @@ namespace WordLineage
                 if (FamilyDisplay.ItemsSource is ObservableCollection<WordNode> nodes)
                 {
                     WordNode newNode = new(AddNodeName.Text);
-
-                    if (ParentComboBox.SelectedItem is WordNode parent)
-                    {
-                        newNode.Parents.Add(parent);
-                    }
-
                     nodes.Add(newNode);
+                    // ensure new node is selected upon exit
+                    FamilyDisplay.SelectedIndex = nodes.Count - 1;
+
                 } else
                 {
                     // warning appears if no word family in the display 
                     MessageBox.Show("No family selected. (FamilyDisplay.ItemsSource is null).");
                 }
 
-                // reset textbox & combo box and close the popup window
+
+
+                // reset textbox and close the Add Node popup
                 AddNodeName.Text = "";
-                ParentComboBox.SelectedIndex = -1;
                 pop_AddNode.IsOpen = false;
+
+                if( sender.Equals(Btn_AddEditNode) )
+                {
+                    // if event sent by AddEdit, open the edit node menu
+                    pop_ModifyNode.IsOpen = true;
+                }
             }
         }
 
-        private void AddParentButton_Click(object sender, RoutedEventArgs e)
+        private void Btn_AddParent_Click(object sender, RoutedEventArgs e)
         {
-            if (FamilyDisplay.SelectedItem is WordNode node && ParentComboBox.SelectedItem is WordNode parent)
+            if (FamilyDisplay.SelectedItem is WordNode node && Cbx_Parents.SelectedItem is WordNode parent)
             {
-                // FamilyDisplay.SelectedItem != null && ParentComboBox.SelectedItem != null
-
-                // add selected node in parent box to list of parents for selected node
-                // (FamilyDisplay.SelectedItem as WordNode).Parents.Add(ParentComboBox.SelectedItem as WordNode);
                 node.Parents.Add(parent);
-
                 // refresh the list in parents by calling update source on the binding
                 NodeParentsDisplay.Items.Refresh();
 
@@ -213,12 +218,33 @@ namespace WordLineage
             }
         }
 
+        private void Btn_AddChild_Click(object sender, RoutedEventArgs e)
+        {
+            if(FamilyDisplay.SelectedItem is WordNode node && Cbx_Children.SelectedItem is WordNode child)
+            {
+                node.Children.Add(child);
+                // Refresh list of Children
+                NodeChildrenDisplay.Items.Refresh();
+            } else
+            {
+                MessageBox.Show("Please select a node and child before adding.");
+            }
+        }
+
         private void Btn_CancelAddNode_Click(object sender, RoutedEventArgs e)
         {
             // reset new node name, selected item in parent drop down, and close popup
             AddNodeName.Text = "";
-            ParentComboBox.SelectedIndex = -1;
             pop_AddNode.IsOpen = false;
+        }
+
+        private void Btn_CloseEdits_Click(object sender, RoutedEventArgs e)
+        {
+            // clear selection boxes and close popup
+            Cbx_Parents.SelectedIndex = -1;
+            Cbx_Children.SelectedIndex = -1;
+            pop_ModifyNode.IsOpen = false;
+
         }
     }
 }

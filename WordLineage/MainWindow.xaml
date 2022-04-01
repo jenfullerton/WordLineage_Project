@@ -27,9 +27,9 @@
         <DockPanel Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top" Background="Gray" Padding="5" >
                 <MenuItem Header="Node Controls">
-                    <MenuItem Header="Delete Node" Command="Delete"/>
+                    <MenuItem Header="Delete Selected Node" Command="Delete"/>
                     <MenuItem Header="Add New Node" Command="New"/>
-                    <MenuItem Header="Edit Node" x:Name="EditNodeMenuBtn"/>
+                    <MenuItem Header="Open Node Editor" x:Name="EditNodeMenuBtn"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
@@ -83,11 +83,9 @@
             <TextBlock Text="Children" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
             <ListView x:Name="NodeChildrenDisplay" Margin="20,5,30,5">
             </ListView>
-
             
-
-            <!-- Add Node Popup Menu -->
-            <Popup x:Name="pop_AddNode" IsOpen="False" MinHeight="200" MinWidth="200"
+            <!-- Add New Node Popup Menu -->
+            <Popup x:Name="pop_AddNode" IsOpen="False" MinHeight="50" MinWidth="200"
                    Placement="Center">
                 <Border BorderBrush="#FF5B5858" BorderThickness="2" Background="LightGray">
                     <StackPanel Orientation="Vertical" Margin="5">
@@ -96,17 +94,43 @@
                             <TextBox x:Name="AddNodeName" MinHeight="16" MinWidth="150"/>
                         </StackPanel>
 
-                        <TextBlock Text="Parent Node (optional): " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <ComboBox x:Name="ParentComboBox" MinHeight="16" MinWidth="150">
-                            </ComboBox>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Button Margin="5" x:Name="AddNodeButton" Click="AddNodeButton_Click">Add Node</Button>
-                            <Button Margin="5" x:Name="Btn_CancelAddNode" Click="Btn_CancelAddNode_Click">Cancel</Button>
+                            <Button Margin="5" Click="Btn_NewNode_Click">Add Node</Button>
+                            <Button Margin="5" x:Name="Btn_AddEditNode" Click="Btn_NewNode_Click">Add Node and Edit</Button>
+                            <Button Margin="5" Click="Btn_CancelAddNode_Click">Cancel</Button>
                         </StackPanel>
                         
+                    </StackPanel>
+                </Border>
+            </Popup>
+            
+
+            <!-- Edit Node Popup Menu -->
+            <Popup x:Name="pop_ModifyNode" IsOpen="False" MinHeight="200" MinWidth="200"
+                   Placement="Center">
+                <Border BorderBrush="#FF5B5858" BorderThickness="2" Background="LightGray">
+                    <StackPanel Orientation="Vertical" Margin="5">
+                        <TextBlock Text="Modify Parents: " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <ComboBox x:Name="Cbx_Parents" MinHeight="16" MinWidth="150">
+                            </ComboBox>
+                            <Button x:Name="Btn_AddParent" Click="Btn_AddParent_Click">
+                                Add Parent
+                            </Button>
+                        </StackPanel>
+
+                        <TextBlock Text="Modify Children: " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox x:Name="Cbx_Children" MinHeight="16" MinWidth="150"/>
+                            <Button x:Name="Btn_AddChild" Click="Btn_AddChild_Click">
+                                Add Child
+                            </Button>
+                        </StackPanel>
+
+                        <Button x:Name="Btn_CloseEdits" Click="Btn_CloseEdits_Click">
+                            Finish Edits and Close
+                        </Button>
+
                     </StackPanel>
                 </Border>
             </Popup>
