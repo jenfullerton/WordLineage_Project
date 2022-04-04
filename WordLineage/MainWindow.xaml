@@ -45,6 +45,11 @@
                 <ListView.Resources>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource NodeDisplayTextStyle}"/>
                 </ListView.Resources>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete Node" Command="Delete"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>
         </Border>
 
@@ -77,11 +82,21 @@
 
 
             <TextBlock Text="Parents" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <ListView x:Name="NodeParentsDisplay" Margin="20,5,30,5">
+            <ListView x:Name="lsv_NodeParentsDisplay" Margin="20,5,30,5">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete Parent" Command="Delete"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>
 
             <TextBlock Text="Children" FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-            <ListView x:Name="NodeChildrenDisplay" Margin="20,5,30,5">
+            <ListView x:Name="lsv_NodeChildrenDisplay" Margin="20,5,30,5">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete Child" Command="Delete"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>
             
             <!-- Add New Node Popup Menu -->
@@ -91,7 +106,7 @@
                     <StackPanel Orientation="Vertical" Margin="5">
                         <StackPanel Orientation="Horizontal" Margin="5" >
                             <TextBlock Text="Node Name: " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
-                            <TextBox x:Name="AddNodeName" MinHeight="16" MinWidth="150"/>
+                            <TextBox x:Name="tbx_NewNodeName" MinHeight="16" MinWidth="150"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="5">
@@ -110,6 +125,8 @@
                    Placement="Center">
                 <Border BorderBrush="#FF5B5858" BorderThickness="2" Background="LightGray">
                     <StackPanel Orientation="Vertical" Margin="5">
+                        <TextBlock x:Name="tbk_NodeInEditing" Text="" HorizontalAlignment="Center"
+                                   FontSize="20" FontFamily="Candara"/>
                         <TextBlock Text="Modify Parents: " FontSize="16" FontFamily="Yu Gothic UI Semibold"/>
                         <StackPanel Orientation="Horizontal" Margin="5">
                             <ComboBox x:Name="Cbx_Parents" MinHeight="16" MinWidth="150">

@@ -7,6 +7,13 @@ using System.Windows.Data;
 
 // using System.Diagnostics; // use for debugging
 
+/* ---  ShortHand Names     ---
+ * pop = popup box  cbx = combobox
+ * btn = button     spl = stackpanel
+ * tbx = textbox    tbk = textblock
+ * lsv = listview
+ */
+
 namespace WordLineage
 {
     /// <summary>
@@ -85,8 +92,9 @@ namespace WordLineage
             {
                 // Update display with new info
                 NodeNameDisplay.Text = selectedNode.Name;
-                NodeParentsDisplay.ItemsSource = selectedNode.Parents;
-                NodeChildrenDisplay.ItemsSource = selectedNode.Children;
+                tbk_NodeInEditing.Text = selectedNode.Name;
+                lsv_NodeParentsDisplay.ItemsSource = selectedNode.Parents;
+                lsv_NodeChildrenDisplay.ItemsSource = selectedNode.Children;
                 
                 /* 
                 NodeDefinitionDisplay.ItemsSource = selectedNode.Definition;
@@ -98,8 +106,8 @@ namespace WordLineage
             {
                 // if selection is null, clear the display
                 NodeNameDisplay.Text = "[No WordNode Selected]";
-                NodeParentsDisplay.ItemsSource = null;
-                NodeChildrenDisplay.ItemsSource= null;
+                lsv_NodeParentsDisplay.ItemsSource = null;
+                lsv_NodeChildrenDisplay.ItemsSource= null;
             }
         }
 
@@ -113,6 +121,8 @@ namespace WordLineage
 
         private void DeleteCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
+            // cannot delete unless a valid node is selected and all pop up
+            //      menus are closed.
             if(FamilyDisplay.ItemsSource != null && FamilyDisplay.SelectedIndex > -1
                 && !pop_ModifyNode.IsOpen && !pop_AddNode.IsOpen)
             {
@@ -124,12 +134,40 @@ namespace WordLineage
         }
 
         private void DeleteCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            // I am like... POSITIVE that we can't get a null here
-            // but intellisense yell at me so *throws hands up* we do the check
+        {   
             if(FamilyDisplay.ItemsSource is ObservableCollection<WordNode> nodes)
             {
-                nodes.RemoveAt(FamilyDisplay.SelectedIndex);
+                // check to see if menu was called on parents or child list
+                if (e.Source.Equals(lsv_NodeParentsDisplay) &&
+                    FamilyDisplay.SelectedItem is WordNode nodeP)
+                {
+                    if(lsv_NodeParentsDisplay.SelectedIndex > -1)
+                    {
+                        nodeP.RemoveParent(lsv_NodeParentsDisplay.SelectedIndex);
+                        lsv_NodeParentsDisplay.Items.Refresh();
+                    } 
+                    else
+                    {
+                        MessageBox.Show("Cannot delete parent unless a parent is selected.");
+                    }
+                } 
+                else if (e.Source.Equals(lsv_NodeChildrenDisplay) &&
+                    FamilyDisplay.SelectedItem is WordNode nodeC)
+                {
+                    if (lsv_NodeChildrenDisplay.SelectedIndex > -1)
+                    {
+                        nodeC.RemoveChild(lsv_NodeChildrenDisplay.SelectedIndex);
+                        lsv_NodeChildrenDisplay.Items.Refresh();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Cannot delete a child unless a child is selected.");
+                    }
+                }
+                else
+                {
+                    nodes.RemoveAt(FamilyDisplay.SelectedIndex);
+                }
             }
         }
 
@@ -149,6 +187,7 @@ namespace WordLineage
         {
             // opens the popup for new node
             pop_AddNode.IsOpen = true;
+            tbx_NewNodeName.Focus();
         }
 
         private void EditNodeCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -169,17 +208,17 @@ namespace WordLineage
 
         private void Btn_NewNode_Click(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(AddNodeName.Text))
+            if (String.IsNullOrWhiteSpace(tbx_NewNodeName.Text))
             {
                 MessageBox.Show("Node Name cannot be empty. Please enter a valid name");
-                AddNodeName.Text = "";
+                tbx_NewNodeName.Text = "";
                 return;
             }
             else
             {
                 if (FamilyDisplay.ItemsSource is ObservableCollection<WordNode> nodes)
                 {
-                    WordNode newNode = new(AddNodeName.Text);
+                    WordNode newNode = new(tbx_NewNodeName.Text);
                     nodes.Add(newNode);
                     // ensure new node is selected upon exit
                     FamilyDisplay.SelectedIndex = nodes.Count - 1;
@@ -190,10 +229,8 @@ namespace WordLineage
                     MessageBox.Show("No family selected. (FamilyDisplay.ItemsSource is null).");
                 }
 
-
-
                 // reset textbox and close the Add Node popup
-                AddNodeName.Text = "";
+                tbx_NewNodeName.Text = "";
                 pop_AddNode.IsOpen = false;
 
                 if( sender.Equals(Btn_AddEditNode) )
@@ -210,7 +247,7 @@ namespace WordLineage
             {
                 node.Parents.Add(parent);
                 // refresh the list in parents by calling update source on the binding
-                NodeParentsDisplay.Items.Refresh();
+                lsv_NodeParentsDisplay.Items.Refresh();
 
             } else
             {
@@ -224,7 +261,7 @@ namespace WordLineage
             {
                 node.Children.Add(child);
                 // Refresh list of Children
-                NodeChildrenDisplay.Items.Refresh();
+                lsv_NodeChildrenDisplay.Items.Refresh();
             } else
             {
                 MessageBox.Show("Please select a node and child before adding.");
@@ -234,7 +271,7 @@ namespace WordLineage
         private void Btn_CancelAddNode_Click(object sender, RoutedEventArgs e)
         {
             // reset new node name, selected item in parent drop down, and close popup
-            AddNodeName.Text = "";
+            tbx_NewNodeName.Text = "";
             pop_AddNode.IsOpen = false;
         }
 
