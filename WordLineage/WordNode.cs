@@ -32,7 +32,40 @@ namespace WordLineage
 
         #endregion
 
-        #region Parents_Controls
+        #region Parent_Child_Controls
+        /// <summary>
+        /// Adds a this node as a parent and the child node as a child
+        /// to the child and parent nodes, respectively.
+        /// </summary>
+        /// <param name="child">The second node to make a connection with.</param>
+        public void AddConnection(WordNode child)
+        {
+            // ensure no duplicate connections are made
+            if (!this.Children.Contains(child) && !child.Parents.Contains(this))
+            {
+                // add the relationship to both nodes
+                this.Children.Add(child);
+                child.Parents.Add(this);
+            }
+        }
+
+        /// <summary>
+        /// Adds multiple directed connections between this parent
+        /// WordNode and multiple child nodes.
+        /// </summary>
+        /// <param name="children">WordNodes that will be added as
+        /// a child of this node.</param>
+        public void AddConnections(params WordNode[] children)
+        {
+            foreach (WordNode child in children)
+            {
+                this.AddConnection(child);
+            }
+        }
+
+        // POTENTIALLY add the reverse multiple-parent adder,
+        // if it seems necessary or useful
+
         /// <summary>
         /// Removes a parent from the parents list for this WordNode.
         /// </summary>
@@ -55,9 +88,6 @@ namespace WordLineage
             this.Parents.Clear();
         }
 
-        #endregion
-
-        #region Children_Controls
         /// <summary>
         /// Removes a Child fromt the children list for this WordNode.
         /// </summary>
@@ -86,13 +116,15 @@ namespace WordLineage
 
         #endregion
 
-        #region Utilities
+        #region Overrides
         // *** Utilities *** //
         // toString returns the name of the WordNode
         public override string ToString()
         {
             return Name;
         }
+
+        // might need an equals or equality comparer override
 
         #endregion
 

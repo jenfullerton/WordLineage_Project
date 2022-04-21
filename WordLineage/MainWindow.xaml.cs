@@ -6,7 +6,6 @@ using System.Windows.Input;
 using System.Windows.Data;
 
 // using System.Diagnostics; // use for debugging
-
 /* ---  ShortHand Names     ---
  * pop = popup box  cbx = combobox
  * btn = button     spl = stackpanel
@@ -33,51 +32,78 @@ namespace WordLineage
             this.CommandBindings.Add(editNodeBinding);
             EditNodeMenuBtn.Command = EditNodeCommand;
 
-            ObservableCollection<WordNode> nodes = new();
-            nodes.Add(new WordNode("First"));
-            nodes.Add(new WordNode("Second"));
-            nodes.Add(new WordNode("Third"));
-            nodes.Add(new WordNode("Fourth"));
-            nodes.Add(new WordNode("Fifth"));
-            nodes.Add(new WordNode("Sixth"));
-
-            // add parents and children
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                for (int j = i + 1; j < nodes.Count; j++)
-                {
-                    nodes[i].Children.Add(nodes[j]);
-                    nodes[j].Parents.Add(nodes[i]);
-                }
-            }
-
+            // WordFamily testFamily = new("Names I Call my Dog");
+            WordFamily testFamily = WL_Utility.GenerateDogNameList();
 
             /*
-            List<WordNode> nodes = new();
-            for (int i = 1; i <= 5; i++)
-            {
-                nodes.Add(new WordNode(
-                    "WordNode "+ i,
-                    "Definition " + i,
-                    "Description " + i,
-                    "tag" + i
-                ));
-            }
+            // create many wordnodes
+            // tier 0 (roots)
+            WordNode puppy = new("puppy");  WordNode stinky = new("stinky baby");
+            WordNode doggo = new("doggo");  WordNode grumpy = new("grumpy");
+            // tier 1
+            WordNode buppy = new("buppy");      WordNode puppo = new("puppo");
+            WordNode stonky = new("stonky");    WordNode babbi = new("babbi");
+            WordNode grumby = new("grumby");
+            // tier 2
+            WordNode buppo = new("buppo");      WordNode bubbo = new("bubbo");
+            WordNode stimky = new("stimky");    WordNode grumbis = new("gumbis");
 
-            foreach (WordNode node in nodes)
+            // Add Connections
+            // tier 0 -> 1
+            puppy.AddConnections(buppy, puppo);
+            doggo.AddConnections(buppy, puppo);
+            stinky.AddConnections(stonky, babbi);
+            grumpy.AddConnections(grumby);
+            // tier 1 -> 2
+            buppy.AddConnections(buppo, bubbo);
+            puppo.AddConnections(buppo, bubbo);
+            stonky.AddConnection(stimky);
+            babbi.AddConnections(stimky, grumbis);
+            grumby.AddConnection(grumbis);
+
+            // Add Words to Family (random order)
+            testFamily.AddWords(grumbis, buppo, stimky, stinky, grumpy, puppy, grumby,
+                puppo, babbi, bubbo, doggo, buppy, stonky);
+
+            // break the cycle on purpose by adding something at the end as a parent
+            grumbis.AddConnection(grumpy);
+            */
+
+           
+            // TOPOLOGICAL SORT TEST
+            List<WordNode>? topoTest = testFamily.Sort();
+            if (topoTest == null)
             {
-                // List<string> l = new List<string> { "one", "two", "three" };
-                node.AddTags(new List<string> { "big", "worm", "dog" });
-                node.AddDefinition("just the one definition");
-                node.AddDefinition("");
-                node.AddDefinitions(new List<string> { "a definition", "", "and another one" });
+                MessageBox.Show("Sorting successful! :)");
+            } else
+            {
+                string badNodes = WL_Utility.FormatStringListForDisplay(
+                    WL_Utility.WordNodeListAsStringList(topoTest));
+                
+                MessageBox.Show("Sorting failed. :(\n" + 
+                    "Potential problem nodes: " + badNodes);
+            }
+            
+
+
+            // add parents and children
+            /*
+            for (int i = 0; i < testFamily.T_Nodes.Count - 1; i++)
+            {
+                for (int j = i + 1; j < testFamily.T_Nodes.Count; j++)
+                {
+                    testFamily.T_Nodes[i].Children.Add(testFamily.T_Nodes[j]);
+                    testFamily.T_Nodes[j].Parents.Add(testFamily.T_Nodes[i]);
+                }
             }
             */
 
-            // data bind listbox to nodes
-            FamilyDisplay.ItemsSource = nodes;
-            Cbx_Parents.ItemsSource = nodes;
-            Cbx_Children.ItemsSource = nodes;
+
+            // data bind listbox options to nodes
+            FamilyDisplay.ItemsSource = testFamily.T_Nodes;
+            Cbx_Parents.ItemsSource = testFamily.T_Nodes;
+            Cbx_Children.ItemsSource = testFamily.T_Nodes;
+            FamilyName.Text = testFamily.Name;
             
         }
         #endregion
